@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prefix Appender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        input {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Input for the prefix -->
+    <input type="text" id="prefixInput" placeholder="Enter prefix" onkeydown="handleKeyDown(event)" autofocus/>
+</div>
+
+<script>
+    // Function to handle the keydown event and append the string when Enter is pressed
+    function handleKeyDown(event) {
+        if (event.key === 'Enter') {
+            const prefix = document.getElementById('prefixInput').value;
+            const constantString = '35722X!';
+            
+            // Concatenate the prefix with the constant string
+            const result = prefix + constantString;
+
+            // Copy the result to the clipboard
+            copyToClipboard(result);
+
+            // Clear the input field after copying
+            document.getElementById('prefixInput').value = '';
+        }
+    }
+
+    // Function to copy text to the clipboard
+    function copyToClipboard(text) {
+        const tempInput = document.createElement('input');
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        alert('Appended string copied to clipboard: ' + text);  // Optional: Remove if no feedback is required
+    }
+</script>
+
+</body>
+</html>
