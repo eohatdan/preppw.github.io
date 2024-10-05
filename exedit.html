@@ -36,45 +36,30 @@
     <input type="text" id="exceptionInput" placeholder="Enter exception string" />
     
     <button onclick="addOrReplaceEntry()">Add/Replace Entry</button>
-    <button onclick="exitEditing()">Exit</button>
+    <button onclick="clearStorage()">Clear Storage</button>
 
     <div class="output">
-        <h3>Updated Exception List:</h3>
+        <h3>Current Exception List:</h3>
         <pre id="jsonOutput"></pre>
     </div>
 </div>
 
 <script>
-    const owner = "eohatdan"; // Your GitHub username
-    const repo = "preppw.github.io"; // Your repository name
-    const filePath = "exlist.json"; // Path to the JSON file in the repository
-    const token = "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"
-"; // Personal access token (keep this secure!)
-
     let exceptionsList = [];
-    let sha = ""; // Stores the file's SHA for updating
 
-    // Function to fetch the JSON file from GitHub
-    async function loadExceptionsList() {
-        try {
-            const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            const data = await response.json();
-            const content = atob(data.content);
-            exceptionsList = JSON.parse(content);
-            sha = data.sha; // Get the SHA to reference the file for updates
-
-            displayExceptions();
-        } catch (error) {
-            console.error("Error loading exceptions list: ", error);
-            exceptionsList = [];
+    // Load the exceptions list from local storage when the page loads
+    function loadFromLocalStorage() {
+        const storedData = localStorage.getItem('exceptionsList');
+        if (storedData) {
+            exceptionsList = JSON.parse(storedData);
+            alert('Data loaded from local storage');
+        } else {
+            alert('No data found in local storage');
         }
+        displayExceptions();
     }
 
-    // Function to display the updated exceptions list
+    // Function to display the exceptions list
     function displayExceptions() {
         document.getElementById('jsonOutput').textContent = JSON.stringify(exceptionsList, null, 4);
     }
@@ -106,46 +91,26 @@
         // Update the display
         displayExceptions();
 
-        // Save the updated list back to GitHub
-        saveToGitHub();
+        // Save the updated list to local storage
+        saveToLocalStorage();
     }
 
-    // Function to save the exceptions list to GitHub
-    async function saveToGitHub() {
-        const content = btoa(JSON.stringify(exceptionsList, null, 4)); // Base64 encode the updated JSON
-
-        try {
-            const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
-                method: "PUT",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    message: "Update exceptions list",
-                    content: content,
-                    sha: sha
-                })
-            });
-            const data = await response.json();
-            sha = data.content.sha; // Update the SHA for future changes
-
-            alert("File updated successfully!");
-        } catch (error) {
-            console.error("Error saving file: ", error);
-            alert("Error saving the file. Check the console for details.");
-        }
+    // Function to save the exceptions list to local storage
+    function saveToLocalStorage() {
+        localStorage.setItem('exceptionsList', JSON.stringify(exceptionsList));
+        alert('Data saved to local storage');
     }
 
-    // Function to exit the editing process
-    function exitEditing() {
-        if (confirm("Are you sure you want to exit? Unsaved changes will be lost.")) {
-            window.close();
-        }
+    // Function to clear the local storage
+    function clearStorage() {
+        localStorage.removeItem('exceptionsList');
+        exceptionsList = [];
+        displayExceptions();
+        alert('Local storage cleared');
     }
 
-    // Load the exceptions list when the page loads
-    window.onload = loadExceptionsList;
+    // Load the data when the page loads
+    window.onload = loadFromLocalStorage;
 </script>
 
 </body>
