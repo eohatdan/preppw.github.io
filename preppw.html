@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prefix App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Prefix Appender</h2>
+
+    <!-- Input for the prefix -->
+    <input type="text" id="prefixInput" placeholder="Enter prefix" onkeydown="handleKeyDown(event)" autofocus/>
+
+    <p id="result"></p>
+</div>
+
+<script>
+    const defaultString = '35722X!';  // Default string to append if no exception is found
+
+    // Function to handle key press (Enter key to process the input)
+    function handleKeyDown(event) {
+        if (event.key === 'Enter') {
+            const prefix = document.getElementById('prefixInput').value.trim();
+            const exceptionString = getExceptionString(prefix);
+            const result = prefix + exceptionString;
+
+            // Display the result
+            document.getElementById('result').textContent = `Appended String: ${result}`;
+
+            // Optionally, copy the result to clipboard
+            copyToClipboard(result);
+
+            // Clear the input field
+            document.getElementById('prefixInput').value = '';
+        }
+    }
+
+    // Function to get the exception string based on the prefix
+    function getExceptionString(prefix) {
+        const exceptionsList = loadExceptionsList();  // Load the exceptions list from local storage
+        if (exceptionsList) {
+            // Check if the prefix exists in the exceptions list
+            const exception = exceptionsList.find(entry => entry.prefix === prefix);
+            if (exception) {
+                return exception.exception;  // Return the exception string if found
+            }
+        }
+        return defaultString;  // Return the default string if no exception is found
+    }
+
+    // Function to load the exceptions list from local storage
+    function loadExceptionsList() {
+        const storedData = localStorage.getItem('exceptionsList');
+        if (storedData) {
+            return JSON.parse(storedData);  // Parse and return the exceptions list from local storage
+        }
+        return null;  // Return null if no exceptions list is found
+    }
+
+    // Function to copy text to clipboard
+    function copyToClipboard(text) {
+        const tempInput = document.createElement('input');
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        alert('Appended string copied to clipboard: ' + text);  // Optional alert
+    }
+</script>
+
+</body>
+</html>
