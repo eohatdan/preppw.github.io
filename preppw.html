@@ -56,17 +56,19 @@
     }
 
     // Function to get the exception string based on the prefix
-    function getExceptionString(prefix) {
-        const exceptionsList = loadExceptionsList();  // Load the exceptions list from local storage
-        if (exceptionsList) {
-            // Check if the prefix exists in the exceptions list
-            const exception = exceptionsList.find(entry => entry.prefix === prefix);
-            if (exception) {
-                return exception.exception;  // Return the exception string if found
-            }
+ function getExceptionString(prefix) {
+    const exceptionsList = loadExceptionsList();
+    console.log("Loaded exceptionsList:", exceptionsList); // Log the data loaded from local storage
+    if (exceptionsList) {
+        const exception = exceptionsList.find(entry => entry.prefix === prefix);
+        if (exception) {
+            console.log(`Found match for prefix "${prefix}":`, exception);
+            return exception.exception;
         }
-        return defaultString;  // Return the default string if no exception is found
     }
+    console.log(`No match found for prefix "${prefix}", using default string.`);
+    return defaultString;
+}
 
     // Function to load the exceptions list from local storage
     function loadExceptionsList() {
